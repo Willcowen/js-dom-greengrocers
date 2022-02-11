@@ -70,7 +70,7 @@ function renderListItems() {
 
     //create li element
     const li = document.createElement("li");
-
+ 
     //create div element
     const div = document.createElement("div");
     div.setAttribute("class", "store--item-icon");
@@ -98,7 +98,7 @@ function addItemToCart(item){
   for (const fruit of state.items) {
     if (fruit.name === item.name)
     state.cart.push(item)
-    fruit.quantity = 1
+    fruit.quantity = 0
   }
   renderCart()
 }
@@ -118,6 +118,7 @@ function renderCart() {
 
   //create text element
   const p = document.createElement("p")
+  p.innerText = state.cart[state.cart.length-1].name
 
   //create buttons
   const removeButton = document.createElement("button")
@@ -128,9 +129,10 @@ function renderCart() {
   span.setAttribute('class', 'quantity-text center')
   let counter = 0
   for (let i = 0; i < state.cart.length; i++) {
-      if (state.cart[i] === state.cart[i+1]) {
+      if (state.cart.includes(state.cart[i])) {
         state.cart[i].quantity++
       }
+      
       counter = state.cart[i].quantity
   }
   span.innerText = counter

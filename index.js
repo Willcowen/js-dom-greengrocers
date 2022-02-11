@@ -55,8 +55,8 @@ const state = {
 };
 
 /*Implement the following requirements
-A user can view a selection of items in the store
-From the store, a user can add an item to their cart
+A user can view a selection of items in the store -- DONE
+From the store, a user can add an item to their cart -- DONE
 From the cart, a user can view and adjust the number of items in their cart
 If an item's quantity equals zero it is removed from the cart
 A user can view the current total in their car */
@@ -98,6 +98,7 @@ function addItemToCart(item){
   for (const fruit of state.items) {
     if (fruit.name === item.name)
     state.cart.push(item)
+    fruit.quantity = 1
   }
   renderCart()
 }
@@ -110,12 +111,39 @@ function renderCart() {
   //create li element
   const li = document.createElement("li");
   console.log(state.cart)
-  const img = document.createElement("img")
-  img.src = `assets/icons/${cart[cart.length-1].id}.svg`
-  
-  
-}
 
+  //create img element
+  const img = document.createElement("img")
+  img.src = `assets/icons/${state.cart[state.cart.length-1].id}.svg`
+
+  //create text element
+  const p = document.createElement("p")
+
+  //create buttons
+  const removeButton = document.createElement("button")
+  removeButton.setAttribute('class', 'quantity-btn remove-btn center')
+  removeButton.innerText = '-'
+
+  const span = document.createElement("span")
+  span.setAttribute('class', 'quantity-text center')
+  let counter = 0
+  for (let i = 0; i < state.cart.length; i++) {
+      if (state.cart[i] === state.cart[i+1]) {
+        state.cart[i].quantity++
+      }
+      counter = state.cart[i].quantity
+  }
+  span.innerText = counter
+  
+
+  const addButton = document.createElement("button")
+  addButton.setAttribute('class', 'quantity-btn add-btn center')
+  addButton.innerText = '+'
+
+  cartItemList.append(li)
+  li.append(img, p, removeButton, span, addButton)
+
+}
 
 renderListItems();
 //renderCart with added items

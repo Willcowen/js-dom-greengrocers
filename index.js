@@ -84,13 +84,23 @@ function renderListItems() {
       } else {
         state.cart.push(cartItem);
       }
-      console.log(state.cart);
       render();
     });
 
     itemList.append(li);
     li.append(div, button);
     div.append(img);
+  }
+}
+
+function updateItemType(){
+  for (const item of state.cart){
+    if (item.name === 'apple' ||  item.name === 'blueberry' || item.name === 'apricot' || item.name === 'bananas' || item.name === 'avocado' || item.name === 'berry') {
+      item.type = "fruit"
+    }
+    else {
+      item.type = "veg"
+    }
   }
 }
 
@@ -137,15 +147,20 @@ function renderCart() {
     });
 
     const fruitButton = document.querySelector(".fruit-btn");
-    fruitButton.addEventListener('click', function(e){
-      e.preventDefault();
+    fruitButton.addEventListener('click', function(){
       //update the state.cart array by filtering only fruit items
-      state.cart.filter(item => {
-        item.name === 'apple' ||  'apricot' || 'bananas' || 'avocado' || 'berry' }
-      )
+      updateItemType()
+      state.cart = state.cart.filter(item => item.type === 'fruit')
       //render
       render()
-      console.log(state.cart)
+    })
+    const vegButton = document.querySelector(".veg-btn");
+    vegButton.addEventListener('click', function(){
+      //update the state.cart array by filtering only fruit items
+      updateItemType()
+      state.cart = state.cart.filter(item => item.type === 'veg')
+      //render
+      render()
     })
 
     cartItemList.append(li);

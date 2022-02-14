@@ -54,37 +54,39 @@ const state = {
   cart: [],
 };
 
-/*Implement the following requirements
-A user can view a selection of items in the store -- DONE
-From the store, a user can add an item to their cart -- DONE
-From the cart, a user can view and adjust the number of items in their cart
-If an item's quantity equals zero it is removed from the cart
-A user can view the current total in their car */
-
 function renderListItems() {
-  //loop through all items in the initial state.
-  for (let i = 0; i < state.items.length; i++) {
+  let counter = 0;
 
-    //find the itemlist on the page
-    const itemList = document.querySelector(".store--item-list");
+  const itemList = document.querySelector(".store--item-list");
 
-    //create li element
+  for (const item of state.items) {
     const li = document.createElement("li");
- 
-    //create div element
     const div = document.createElement("div");
     div.setAttribute("class", "store--item-icon");
 
-    //create img element and assign src for each iteration of the loop
     const img = document.createElement("img");
-    img.src = `assets/icons/${state.items[i].id}.svg`
+    img.src = `assets/icons/${state.items[counter].id}.svg`;
+    counter++;
 
     const button = document.createElement("button");
-    button.setAttribute('class', 'add-to-cart')
-    button.innerText = 'ADD TO CART'
-    button.addEventListener('click', function(){
-      addItemToCart(state.items[i])
-    }) 
+    button.setAttribute("class", "add-to-cart");
+    button.innerText = "ADD TO CART";
+    button.addEventListener("click", function () {
+      const cartItem = {
+        name: item.name,
+        price: item.price,
+        img: img.src,
+        quantity: 1,
+      };
+      const itemExistsInCart = state.cart.find((i) => i.name === item.name);
+      if (itemExistsInCart) {
+        itemExistsInCart.quantity++;
+      } else {
+        state.cart.push(cartItem);
+      }
+      console.log(state.cart);
+      render();
+    });
 
     itemList.append(li);
     li.append(div, button);
@@ -92,64 +94,86 @@ function renderListItems() {
   }
 }
 
+function clear() {
 
-function addItemToCart(item){
-  console.log('You added an item to the cart!')
-  for (const fruit of state.items) {
-    if (fruit.name === item.name)
-    state.cart.push(item)
-    fruit.quantity = 0
-  }
-  renderCart()
+  const cartItemList = document.querySelector(".cart--item-list");
+  const itemList = document.querySelector(".store--item-list");
+  cartItemList.innerHTML = "";
+  itemList.innerHTML = "";
+  
 }
 
 function renderCart() {
-  
-  //target the ul element by its class
-  const cartItemList = document.querySelector('.cart--item-list')
+  const cartItemList = document.querySelector(".cart--item-list");
+  for (const item of state.cart) {
+    const li = document.createElement("li");
+    const img = document.createElement("img");
+    img.src = item.img;
 
-  //create li element
-  const li = document.createElement("li");
-  console.log(state.cart)
-
-  //create img element
-  const img = document.createElement("img")
-  img.src = `assets/icons/${state.cart[state.cart.length-1].id}.svg`
-
-  //create text element
-  const p = document.createElement("p")
-  p.innerText = state.cart[state.cart.length-1].name
-
-  //create buttons
-  const removeButton = document.createElement("button")
-  removeButton.setAttribute('class', 'quantity-btn remove-btn center')
-  removeButton.innerText = '-'
-
-  const span = document.createElement("span")
-  span.setAttribute('class', 'quantity-text center')
-  let counter = 0
-  for (let i = 0; i < state.cart.length; i++) {
-      if (state.cart.includes(state.cart[i])) {
-        state.cart[i].quantity++
+    const p = document.createElement("p");
+    p.innerText = item.name;
+    const removeButton = document.createElement("button");
+    removeButton.setAttribute("class", "quantity-btn remove-btn center");
+    removeButton.innerText = "-";
+    removeButton.addEventListener("click", function () {
+      item.quantity--;
+      if (item.quantity === 0) {
+        const cartItemIndex = state.cart.findIndex((i) => i === item);
+        state.cart.splice(cartItemIndex, 1);
       }
-      
-      counter = state.cart[i].quantity
+      render();
+    });
+
+    const span = document.createElement("span");
+    span.setAttribute("class", "quantity-text center");
+    span.innerText = item.quantity;
+
+    const addButton = document.createElement("button");
+    addButton.setAttribute("class", "quantity-btn add-btn center");
+    addButton.innerText = "+";
+    addButton.addEventListener("click", function () {
+      item.quantity++;
+      render();
+    });
+
+    const fruitButton = document.querySelector(".fruit-btn");
+    fruitButton.addEventListener('click', function(e){
+      e.preventDefault();
+      //update the state.cart array by filtering only fruit items
+      state.cart.filter(item => {
+        item.name === 'apple' ||  'apricot' || 'bananas' || 'avocado' || 'berry' }
+      )
+      //render
+      render()
+      console.log(state.cart)
+    })
+
+    cartItemList.append(li);
+    li.append(img, p, removeButton, span, addButton);
   }
-  span.innerText = counter
-  
-
-  const addButton = document.createElement("button")
-  addButton.setAttribute('class', 'quantity-btn add-btn center')
-  addButton.innerText = '+'
-
-  cartItemList.append(li)
-  li.append(img, p, removeButton, span, addButton)
-
 }
 
-renderListItems();
-//renderCart with added items
+function renderCartTotal() {
+  let totalCost = document.querySelector(".total-number");
+  let counter = 0;
+  for (const item of state.cart) {
+    if (item) {
+      counter += item.price * item.quantity;
+    } else {
+      totalCost;
+    }
+  }
+  totalCost.innerText = counter.toFixed(2);
+}
 
 
 
 
+function render() {
+  clear();
+  renderListItems();
+  renderCart();
+  renderCartTotal();
+}
+
+render();

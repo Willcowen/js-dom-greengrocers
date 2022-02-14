@@ -178,7 +178,7 @@ function renderCartTotal() {
       totalCost;
     }
   }
-  totalCost.innerText = counter.toFixed(2);
+  totalCost.innerText = '£' + counter.toFixed(2);
 }
 
 
